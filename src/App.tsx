@@ -6,8 +6,10 @@ import OutreachView from './components/OutreachView';
 import EntryModal from './components/EntryModal';
 import { useSpecShoots } from './hooks/useSpecShoots';
 import { useOutreach } from './hooks/useOutreach';
+import { isConfigured } from './lib/supabase';
 import type { SpecShoot, CompanyOutreach } from './types/database';
 import { motion, AnimatePresence } from 'framer-motion';
+import { AlertTriangle } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState<'Gallery' | 'Outreach'>('Gallery');
@@ -27,6 +29,11 @@ function App() {
   const handleAddShoot = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!shootTitle) return;
+    
+    if (!isConfigured) {
+      alert('Please configure your Supabase credentials in .env or Netlify settings first.');
+      return;
+    }
     
     if (editingShoot) {
       await updateShoot(editingShoot.id, { title: shootTitle });
@@ -48,6 +55,11 @@ function App() {
   const handleAddLead = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!leadCompany) return;
+
+    if (!isConfigured) {
+      alert('Please configure your Supabase credentials in .env or Netlify settings first.');
+      return;
+    }
 
     if (editingLead) {
       await updateLead(editingLead.id, { company_name: leadCompany });
@@ -82,6 +94,25 @@ function App() {
     <Layout 
       header={<TabSwitcher activeTab={activeTab} setActiveTab={setActiveTab} />}
     >
+      {!isConfigured && (
+        <div className="mb-8 p-4 bg-orange-50 border border-orange-100 rounded-2xl flex items-center gap-4 text-orange-800 shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-orange-500 shadow-sm">
+            <AlertTriangle size={20} />
+          </div>
+          <div className="flex-1">
+            <p className="font-bold text-sm">Database Setup Required</p>
+            <p className="text-xs opacity-80 mt-0.5">Please add your Supabase credentials to .env (local) or Netlify environment variables to start saving data.</p>
+          </div>
+          <a 
+            href="https://github.com/gabadub123-cmd/Video-agency#setup" 
+            target="_blank" 
+            className="text-xs font-bold bg-orange-100 hover:bg-orange-200 px-4 py-2 rounded-full transition-all"
+          >
+            Setup Guide
+          </a>
+        </div>
+      )}
+
       <AnimatePresence mode="wait">
         {activeTab === 'Gallery' ? (
           <motion.div
