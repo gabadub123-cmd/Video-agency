@@ -6,8 +6,8 @@ import OutreachView from './components/OutreachView';
 import EntryModal from './components/EntryModal';
 import { useSpecShoots } from './hooks/useSpecShoots';
 import { useOutreach } from './hooks/useOutreach';
-import { isConfigured } from './lib/supabase';
-import type { SpecShoot, CompanyOutreach } from './types/database';
+import { isConfigured, supabase } from './lib/supabase';
+import type { SpecShoot, CompanyOutreach, SpecShootStatus, OutreachStatus } from './types/database';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle } from 'lucide-react';
 
