@@ -4,6 +4,7 @@ import TabSwitcher from './components/TabSwitcher';
 import GalleryView from './components/GalleryView';
 import OutreachView from './components/OutreachView';
 import EntryModal from './components/EntryModal';
+import ConfirmModal from './components/ConfirmModal';
 import { useSpecShoots } from './hooks/useSpecShoots';
 import { useOutreach } from './hooks/useOutreach';
 import { isConfigured, supabase } from './lib/supabase';
@@ -19,6 +20,8 @@ function App() {
   // Modal states
   const [isShootModalOpen, setIsShootModalOpen] = useState(false);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<{ id: string, type: 'shoot' | 'lead' } | null>(null);
   const [editingShoot, setEditingShoot] = useState<SpecShoot | null>(null);
   const [editingLead, setEditingLead] = useState<CompanyOutreach | null>(null);
 
@@ -193,7 +196,10 @@ function App() {
               loading={shootsLoading} 
               onAdd={() => { resetShootForm(); setIsShootModalOpen(true); }}
               onEdit={openEditShoot}
-              onDelete={deleteShoot}
+              onDelete={(id) => {
+                setPendingDelete({ id, type: 'shoot' });
+                setIsConfirmOpen(true);
+              }}
             />
           </motion.div>
         ) : (
@@ -209,7 +215,10 @@ function App() {
               loading={leadsLoading} 
               onAdd={() => { resetLeadForm(); setIsLeadModalOpen(true); }}
               onEdit={openEditLead}
-              onDelete={deleteLead}
+              onDelete={(id) => {
+                setPendingDelete({ id, type: 'lead' });
+                setIsConfirmOpen(true);
+              }}
               onUpdateStatus={(id, status) => updateLead(id, { status })}
             />
           </motion.div>
@@ -369,6 +378,21 @@ function App() {
           </button>
         </form>
       </EntryModal>
+
+      <ConfirmModal 
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={async () => {
+          if (!pendingDelete) return;
+          if (pendingDelete.type === 'shoot') {
+            await deleteShoot(pendingDelete.id);
+          } else {
+            await deleteLead(pendingDelete.id);
+          }
+        }}
+        title="Confirm Deletion"
+        message={`Are you sure you want to delete this ${pendingDelete?.type === 'shoot' ? 'project' : 'lead'}? This action cannot be undone.`}
+      />
     </Layout>
   );
 }

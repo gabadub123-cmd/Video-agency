@@ -61,9 +61,7 @@ const OutreachView: React.FC<OutreachViewProps> = ({ leads, loading, onAdd, onEd
                   lead={lead} 
                   onUpdateStatus={onUpdateStatus} 
                   onEdit={onEdit} 
-                  onDelete={() => {
-                    if (confirm('Delete this company?')) onDelete(lead.id);
-                  }}
+                  onDelete={() => onDelete(lead.id)}
                 />
               ))}
               

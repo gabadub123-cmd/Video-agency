@@ -44,9 +44,7 @@ const GalleryView: React.FC<GalleryViewProps> = ({ shoots, loading, onAdd, onEdi
             key={shoot.id} 
             shoot={shoot} 
             onClick={() => onEdit(shoot)} 
-            onDelete={() => {
-              if (confirm('Are you sure you want to delete this project?')) onDelete(shoot.id);
-            }}
+            onDelete={() => onDelete(shoot.id)}
           />
         ))}
         
