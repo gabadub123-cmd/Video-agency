@@ -13,8 +13,8 @@ import { AlertTriangle } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState<'Gallery' | 'Outreach'>('Gallery');
-  const { shoots, loading: shootsLoading, addShoot, updateShoot } = useSpecShoots();
-  const { leads, loading: leadsLoading, addLead, updateLead } = useOutreach();
+  const { shoots, loading: shootsLoading, addShoot, updateShoot, deleteShoot } = useSpecShoots();
+  const { leads, loading: leadsLoading, addLead, updateLead, deleteLead } = useOutreach();
 
   // Modal states
   const [isShootModalOpen, setIsShootModalOpen] = useState(false);
@@ -193,6 +193,7 @@ function App() {
               loading={shootsLoading} 
               onAdd={() => { resetShootForm(); setIsShootModalOpen(true); }}
               onEdit={openEditShoot}
+              onDelete={deleteShoot}
             />
           </motion.div>
         ) : (
@@ -208,6 +209,7 @@ function App() {
               loading={leadsLoading} 
               onAdd={() => { resetLeadForm(); setIsLeadModalOpen(true); }}
               onEdit={openEditLead}
+              onDelete={deleteLead}
               onUpdateStatus={(id, status) => updateLead(id, { status })}
             />
           </motion.div>

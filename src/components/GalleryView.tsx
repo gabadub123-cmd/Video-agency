@@ -8,9 +8,10 @@ interface GalleryViewProps {
   loading: boolean;
   onAdd: () => void;
   onEdit: (shoot: SpecShoot) => void;
+  onDelete: (id: string) => void;
 }
 
-const GalleryView: React.FC<GalleryViewProps> = ({ shoots, loading, onAdd, onEdit }) => {
+const GalleryView: React.FC<GalleryViewProps> = ({ shoots, loading, onAdd, onEdit, onDelete }) => {
   if (loading && shoots.length === 0) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -39,7 +40,14 @@ const GalleryView: React.FC<GalleryViewProps> = ({ shoots, loading, onAdd, onEdi
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {shoots.map((shoot) => (
-          <ProjectCard key={shoot.id} shoot={shoot} onClick={() => onEdit(shoot)} />
+          <ProjectCard 
+            key={shoot.id} 
+            shoot={shoot} 
+            onClick={() => onEdit(shoot)} 
+            onDelete={() => {
+              if (confirm('Are you sure you want to delete this project?')) onDelete(shoot.id);
+            }}
+          />
         ))}
         
         {shoots.length === 0 && !loading && (

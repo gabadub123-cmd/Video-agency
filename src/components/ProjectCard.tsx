@@ -1,10 +1,11 @@
 import React from 'react';
 import type { SpecShoot } from '../types/database';
-import { Calendar, MoreVertical } from 'lucide-react';
+import { Calendar, Trash2 } from 'lucide-react';
 
 interface ProjectCardProps {
   shoot: SpecShoot;
   onClick: () => void;
+  onDelete: () => void;
 }
 
 const statusColors: Record<SpecShoot['status'], string> = {
@@ -15,7 +16,7 @@ const statusColors: Record<SpecShoot['status'], string> = {
   'Done': 'bg-green-50 text-green-600',
 };
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ shoot, onClick }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ shoot, onClick, onDelete }) => {
   return (
     <div 
       onClick={onClick}
@@ -43,8 +44,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ shoot, onClick }) => {
       <div className="p-5">
         <div className="flex items-start justify-between">
           <h3 className="font-semibold text-gray-900 leading-snug">{shoot.title}</h3>
-          <button className="text-gray-400 hover:text-gray-600 transition-colors">
-            <MoreVertical size={18} />
+          <button 
+            onClick={(e) => { e.stopPropagation(); onDelete(); }}
+            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+          >
+            <Trash2 size={18} />
           </button>
         </div>
         

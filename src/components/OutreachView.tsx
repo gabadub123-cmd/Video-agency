@@ -8,10 +8,11 @@ interface OutreachViewProps {
   loading: boolean;
   onAdd: () => void;
   onEdit: (lead: CompanyOutreach) => void;
+  onDelete: (id: string) => void;
   onUpdateStatus: (id: string, status: OutreachStatus) => void;
 }
 
-const OutreachView: React.FC<OutreachViewProps> = ({ leads, loading, onAdd, onEdit, onUpdateStatus }) => {
+const OutreachView: React.FC<OutreachViewProps> = ({ leads, loading, onAdd, onEdit, onDelete, onUpdateStatus }) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-10">
@@ -60,6 +61,9 @@ const OutreachView: React.FC<OutreachViewProps> = ({ leads, loading, onAdd, onEd
                   lead={lead} 
                   onUpdateStatus={onUpdateStatus} 
                   onEdit={onEdit} 
+                  onDelete={() => {
+                    if (confirm('Delete this company?')) onDelete(lead.id);
+                  }}
                 />
               ))}
               
