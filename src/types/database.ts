@@ -17,6 +17,8 @@ export interface CompanyOutreach {
   created_at: string;
   company_name: string;
   contact_name: string | null;
+  email: string | null;
+  phone: string | null;
   status: OutreachStatus;
   notes: string | null;
   industry: string | null;

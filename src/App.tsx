@@ -6,6 +6,7 @@ import OutreachView from './components/OutreachView';
 import EntryModal from './components/EntryModal';
 import ConfirmModal from './components/ConfirmModal';
 import ProjectDetailModal from './components/ProjectDetailModal';
+import LeadDetailModal from './components/LeadDetailModal';
 import { useSpecShoots } from './hooks/useSpecShoots';
 import { useOutreach } from './hooks/useOutreach';
 import { isConfigured, supabase } from './lib/supabase';
@@ -26,7 +27,9 @@ function App() {
   const [editingShoot, setEditingShoot] = useState<SpecShoot | null>(null);
   const [editingLead, setEditingLead] = useState<CompanyOutreach | null>(null);
   const [viewingShoot, setViewingShoot] = useState<SpecShoot | null>(null);
+  const [viewingLead, setViewingLead] = useState<CompanyOutreach | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isLeadDetailModalOpen, setIsLeadDetailModalOpen] = useState(false);
 
   // Form states
   const [shootTitle, setShootTitle] = useState('');
@@ -38,6 +41,8 @@ function App() {
 
   const [leadCompany, setLeadCompany] = useState('');
   const [leadContact, setLeadContact] = useState('');
+  const [leadEmail, setLeadEmail] = useState('');
+  const [leadPhone, setLeadPhone] = useState('');
   const [leadStatus, setLeadStatus] = useState<OutreachStatus>('Lead');
   const [leadIndustry, setLeadIndustry] = useState('');
   const [leadNotes, setLeadNotes] = useState('');
@@ -118,6 +123,8 @@ function App() {
     const leadData = {
       company_name: leadCompany,
       contact_name: leadContact,
+      email: leadEmail,
+      phone: leadPhone,
       status: leadStatus,
       industry: leadIndustry,
       notes: leadNotes
@@ -137,6 +144,8 @@ function App() {
     setEditingLead(null);
     setLeadCompany('');
     setLeadContact('');
+    setLeadEmail('');
+    setLeadPhone('');
     setLeadStatus('Lead');
     setLeadIndustry('');
     setLeadNotes('');
@@ -156,6 +165,8 @@ function App() {
     setEditingLead(lead);
     setLeadCompany(lead.company_name);
     setLeadContact(lead.contact_name || '');
+    setLeadEmail(lead.email || '');
+    setLeadPhone(lead.phone || '');
     setLeadStatus(lead.status);
     setLeadIndustry(lead.industry || '');
     setLeadNotes(lead.notes || '');
@@ -221,6 +232,10 @@ function App() {
               leads={leads} 
               loading={leadsLoading} 
               onAdd={() => { resetLeadForm(); setIsLeadModalOpen(true); }}
+              onViewDetail={(lead) => {
+                setViewingLead(lead);
+                setIsLeadDetailModalOpen(true);
+              }}
               onEdit={openEditLead}
               onDelete={(id) => {
                 setPendingDelete({ id, type: 'lead' });
@@ -337,7 +352,7 @@ function App() {
                 type="text" 
                 value={leadContact}
                 onChange={(e) => setLeadContact(e.target.value)}
-                placeholder="Name"
+                placeholder="Full Name"
                 className="w-full px-4 py-2.5 bg-apple-offwhite border-none rounded-xl focus:ring-2 focus:ring-apple-blue/20 transition-all text-sm font-medium"
               />
             </div>
@@ -348,6 +363,29 @@ function App() {
                 value={leadIndustry}
                 onChange={(e) => setLeadIndustry(e.target.value)}
                 placeholder="e.g. Tech"
+                className="w-full px-4 py-2.5 bg-apple-offwhite border-none rounded-xl focus:ring-2 focus:ring-apple-blue/20 transition-all text-sm font-medium"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Email Address</label>
+              <input 
+                type="email" 
+                value={leadEmail}
+                onChange={(e) => setLeadEmail(e.target.value)}
+                placeholder="hello@company.com"
+                className="w-full px-4 py-2.5 bg-apple-offwhite border-none rounded-xl focus:ring-2 focus:ring-apple-blue/20 transition-all text-sm font-medium"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Phone Number</label>
+              <input 
+                type="tel" 
+                value={leadPhone}
+                onChange={(e) => setLeadPhone(e.target.value)}
+                placeholder="+1 234 567 890"
                 className="w-full px-4 py-2.5 bg-apple-offwhite border-none rounded-xl focus:ring-2 focus:ring-apple-blue/20 transition-all text-sm font-medium"
               />
             </div>
@@ -406,6 +444,12 @@ function App() {
         onClose={() => setIsDetailModalOpen(false)}
         shoot={viewingShoot}
         onEdit={() => viewingShoot && openEditShoot(viewingShoot)}
+      />
+      <LeadDetailModal 
+        isOpen={isLeadDetailModalOpen}
+        onClose={() => setIsLeadDetailModalOpen(false)}
+        lead={viewingLead}
+        onEdit={() => viewingLead && openEditLead(viewingLead)}
       />
     </Layout>
   );
