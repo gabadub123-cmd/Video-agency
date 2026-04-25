@@ -5,6 +5,7 @@ import GalleryView from './components/GalleryView';
 import OutreachView from './components/OutreachView';
 import EntryModal from './components/EntryModal';
 import ConfirmModal from './components/ConfirmModal';
+import ProjectDetailModal from './components/ProjectDetailModal';
 import { useSpecShoots } from './hooks/useSpecShoots';
 import { useOutreach } from './hooks/useOutreach';
 import { isConfigured, supabase } from './lib/supabase';
@@ -24,6 +25,8 @@ function App() {
   const [pendingDelete, setPendingDelete] = useState<{ id: string, type: 'shoot' | 'lead' } | null>(null);
   const [editingShoot, setEditingShoot] = useState<SpecShoot | null>(null);
   const [editingLead, setEditingLead] = useState<CompanyOutreach | null>(null);
+  const [viewingShoot, setViewingShoot] = useState<SpecShoot | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   // Form states
   const [shootTitle, setShootTitle] = useState('');
@@ -195,6 +198,10 @@ function App() {
               shoots={shoots} 
               loading={shootsLoading} 
               onAdd={() => { resetShootForm(); setIsShootModalOpen(true); }}
+              onViewDetail={(shoot) => {
+                setViewingShoot(shoot);
+                setIsDetailModalOpen(true);
+              }}
               onEdit={openEditShoot}
               onDelete={(id) => {
                 setPendingDelete({ id, type: 'shoot' });
@@ -392,6 +399,13 @@ function App() {
         }}
         title="Confirm Deletion"
         message={`Are you sure you want to delete this ${pendingDelete?.type === 'shoot' ? 'project' : 'lead'}? This action cannot be undone.`}
+      />
+
+      <ProjectDetailModal 
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        shoot={viewingShoot}
+        onEdit={() => viewingShoot && openEditShoot(viewingShoot)}
       />
     </Layout>
   );
